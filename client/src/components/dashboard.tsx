@@ -63,12 +63,11 @@ export default function Dashboard() {
           <div className="flex justify-between items-start mb-8">
             <div>
               <h1 className="text-6xl md:text-8xl font-black bg-gradient-to-r from-sky-400 via-blue-400 to-cyan-300 bg-clip-text text-transparent mb-4 tracking-tight">
-                
-
+                Dashboard
               </h1>
               <div className="flex items-center gap-4 text-sky-300">
                 <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-lg"></span>
+                <span className="text-lg">Welcome back, {userData.firstName}</span>
               </div>
             </div>
           </div>
@@ -149,9 +148,6 @@ export default function Dashboard() {
                 {/* Balance Header */}
                 <div className="mb-8">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-sky-400 to-blue-500 rounded-xl flex items-center justify-center">
-                      <div className="w-6 h-6 bg-white rounded-md"></div>
-                    </div>
                     <div className="text-2xl text-sky-300 font-medium">Current Balance</div>
                   </div>
                   <div className="w-full h-1 bg-gradient-to-r from-sky-400 via-blue-400 to-cyan-400 rounded-full"></div>
@@ -171,19 +167,16 @@ export default function Dashboard() {
                 {/* Balance Stats */}
                 <div className="grid grid-cols-3 gap-6">
                   <div className="text-center p-4 bg-black/30 rounded-2xl border border-sky-400/20 hover:border-sky-400/40 transition-all duration-300 group">
-                    <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-emerald-500 rounded-lg mx-auto mb-3 group-hover:scale-110 transition-transform duration-300"></div>
                     <div className="text-green-400 text-xl font-bold">+12.5%</div>
                     <div className="text-gray-400 text-sm uppercase tracking-wide">This Month</div>
                   </div>
                   
                   <div className="text-center p-4 bg-black/30 rounded-2xl border border-sky-400/20 hover:border-sky-400/40 transition-all duration-300 group">
-                    <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-lg mx-auto mb-3 group-hover:scale-110 transition-transform duration-300"></div>
                     <div className="text-blue-400 text-xl font-bold">Elite</div>
                     <div className="text-gray-400 text-sm uppercase tracking-wide">Status</div>
                   </div>
                   
                   <div className="text-center p-4 bg-black/30 rounded-2xl border border-sky-400/20 hover:border-sky-400/40 transition-all duration-300 group">
-                    <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-teal-500 rounded-lg mx-auto mb-3 group-hover:scale-110 transition-transform duration-300"></div>
                     <div className="text-cyan-400 text-xl font-bold">Secure</div>
                     <div className="text-gray-400 text-sm uppercase tracking-wide">Protected</div>
                   </div>
@@ -197,25 +190,21 @@ export default function Dashboard() {
         <div className={`grid grid-cols-1 md:grid-cols-4 gap-6 mt-12 max-w-7xl mx-auto transform transition-all duration-1500 delay-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
           
           <div className="backdrop-blur-xl bg-gray-900/30 border border-sky-400/20 rounded-2xl p-6 hover:border-sky-400/40 transition-all duration-300 group">
-            <div className="w-10 h-10 bg-gradient-to-r from-sky-400 to-blue-500 rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300"></div>
             <div className="text-sky-300 text-sm mb-1 uppercase tracking-wide">Bank Branch</div>
             <div className="text-white font-semibold">Downtown Elite</div>
           </div>
 
           <div className="backdrop-blur-xl bg-gray-900/30 border border-sky-400/20 rounded-2xl p-6 hover:border-sky-400/40 transition-all duration-300 group">
-            <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 to-teal-500 rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300"></div>
             <div className="text-sky-300 text-sm mb-1 uppercase tracking-wide">Last Login</div>
             <div className="text-white font-semibold">2 mins ago</div>
           </div>
 
           <div className="backdrop-blur-xl bg-gray-900/30 border border-sky-400/20 rounded-2xl p-6 hover:border-sky-400/40 transition-all duration-300 group">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300"></div>
             <div className="text-sky-300 text-sm mb-1 uppercase tracking-wide">Location</div>
             <div className="text-white font-semibold">New York, USA</div>
           </div>
 
           <div className="backdrop-blur-xl bg-gray-900/30 border border-sky-400/20 rounded-2xl p-6 hover:border-sky-400/40 transition-all duration-300 group">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-500 rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300"></div>
             <div className="text-sky-300 text-sm mb-1 uppercase tracking-wide">Quick Access</div>
             <div className="text-white font-semibold">Enabled</div>
           </div>

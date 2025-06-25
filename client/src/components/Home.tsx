@@ -23,69 +23,46 @@ export default function Home() {
   }, []);
 
   const timeline = [
-    { year: "1985", event: "Founded as First Digital Bank", icon: "🏦", desc: "Started with a vision to revolutionize banking" },
-    { year: "1995", event: "First Online Banking Platform", icon: "💻", desc: "Pioneered internet banking services" },
-    { year: "2005", event: "Mobile Banking Launch", icon: "📱", desc: "First bank to offer full mobile services" },
-    { year: "2015", event: "AI Integration", icon: "🤖", desc: "Introduced AI-powered financial insights" },
-    { year: "2024", event: "Quantum Security", icon: "🔮", desc: "Next-gen quantum encryption technology" }
+    { year: "1985", event: "Founded as First Digital Bank", desc: "Started with a vision to revolutionize banking" },
+    { year: "1995", event: "First Online Banking Platform", desc: "Pioneered internet banking services" },
+    { year: "2005", event: "Mobile Banking Launch", desc: "First bank to offer full mobile services" },
+    { year: "2015", event: "AI Integration", desc: "Introduced AI-powered financial insights" },
+    { year: "2024", event: "Quantum Security", desc: "Next-gen quantum encryption technology" }
   ];
 
   const achievements = [
-    { number: "40", suffix: "Years", label: "of Innovation", icon: "🏆" },
-    { number: "15M", suffix: "+", label: "Happy Customers", icon: "👥" },
-    { number: "200", suffix: "+", label: "Countries Served", icon: "🌍" },
-    { number: "99.99", suffix: "%", label: "Uptime Record", icon: "⚡" }
+    { number: "40", suffix: "Years", label: "of Innovation" },
+    { number: "15M", suffix: "+", label: "Happy Customers" },
+    { number: "200", suffix: "+", label: "Countries Served" },
+    { number: "99.99", suffix: "%", label: "Uptime Record" }
   ];
 
   const awards = [
-    { title: "Best Digital Bank 2024", org: "Financial Times", icon: "🥇" },
-    { title: "Innovation Award", org: "Banking Summit", icon: "💡" },
-    { title: "Customer Choice", org: "TrustPilot", icon: "⭐" },
-    { title: "Security Excellence", org: "CyberSec Awards", icon: "🛡️" }
+    { title: "Best Digital Bank 2024", org: "Financial Times" },
+    { title: "Innovation Award", org: "Banking Summit" },
+    { title: "Customer Choice", org: "TrustPilot" },
+    { title: "Security Excellence", org: "CyberSec Awards" }
   ];
 
   const testimonials = [
-    { name: "Sarah Chen", role: "Tech Entrepreneur", text: "NeoBank's AI insights helped me grow my startup by 300%", avatar: "👩💼" },
-    { name: "Marcus Johnson", role: "Investment Banker", text: "The most innovative banking platform I've ever used", avatar: "👨💼" },
-    { name: "Elena Rodriguez", role: "Small Business Owner", text: "Their support turned my dream into a million-dollar business", avatar: "👩🚀" }
+    { name: "Sarah Chen", role: "Tech Entrepreneur", text: "NeoBank's AI insights helped me grow my startup by 300%" },
+    { name: "Marcus Johnson", role: "Investment Banker", text: "The most innovative banking platform I've ever used" },
+    { name: "Elena Rodriguez", role: "Small Business Owner", text: "Their support turned my dream into a million-dollar business" }
   ];
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
-      {/* Dynamic Background */}
+      {/* Background Effects - Login Style */}
       <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-cyan-900/20"></div>
-        <div 
-          className="absolute inset-0 opacity-40"
-          style={{
-            background: `
-              radial-gradient(circle at ${20 + scrollY * 0.02}% ${30 + scrollY * 0.01}%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at ${80 - scrollY * 0.01}% ${70 - scrollY * 0.02}%, rgba(147, 51, 234, 0.12) 0%, transparent 50%),
-              radial-gradient(circle at ${50 + Math.sin(scrollY * 0.01) * 20}% ${50 + Math.cos(scrollY * 0.01) * 20}%, rgba(6, 182, 212, 0.1) 0%, transparent 50%)
-            `
-          }}
-        ></div>
+        {/* Pure black base */}
+        <div className="absolute inset-0 bg-black"></div>
         
-        {/* Floating Elements */}
-        <div className="absolute inset-0">
-          {[...Array(30)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute animate-pulse"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${3 + Math.random() * 4}s`
-              }}
-            >
-              <div className="w-2 h-2 bg-blue-400 rounded-full opacity-60"></div>
-            </div>
-          ))}
+        {/* Subtle light blue accents */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-sky-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-400/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
       </div>
-
-      
 
       {/* Hero Section */}
       <section className="relative z-10 px-6 pt-20 pb-32">
@@ -94,7 +71,6 @@ export default function Home() {
             className="transform transition-all duration-1000"
             style={{ transform: `translateY(${scrollY * 0.1}px)` }}
           >
-            <div className="text-6xl mb-8 animate-bounce">🏦</div>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-8">
               <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
                 40 Years
@@ -119,7 +95,6 @@ export default function Home() {
                 style={{ transitionDelay: `${index * 200}ms` }}
               >
                 <div className="group p-6 rounded-3xl backdrop-blur-lg border border-gray-800 hover:border-blue-500/50 transition-all duration-500 hover:scale-105">
-                  <div className="text-4xl mb-4">{stat.icon}</div>
                   <div className="text-3xl md:text-4xl font-bold text-blue-400">
                     {stat.number}<span className="text-purple-400">{stat.suffix}</span>
                   </div>
@@ -176,7 +151,6 @@ export default function Home() {
                         ? 'border-blue-500/50 bg-gradient-to-br from-blue-500/10 to-purple-500/10' 
                         : 'border-gray-800 bg-gray-900/20'
                     }`}>
-                      <div className="text-6xl mb-4">{item.icon}</div>
                       <div className="text-2xl font-bold text-blue-400 mb-2">{item.year}</div>
                       <h3 className="text-xl font-semibold mb-3">{item.event}</h3>
                       <p className="text-gray-400">{item.desc}</p>
@@ -210,9 +184,6 @@ export default function Home() {
                   background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.05), rgba(245, 158, 11, 0.05))'
                 }}
               >
-                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {award.icon}
-                </div>
                 <h3 className="text-lg font-bold mb-2 text-yellow-400">{award.title}</h3>
                 <p className="text-gray-400 text-sm">{award.org}</p>
               </div>
@@ -243,9 +214,6 @@ export default function Home() {
                   background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(59, 130, 246, 0.05))'
                 }}
               >
-                <div className="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                  {testimonial.avatar}
-                </div>
                 <blockquote className="text-lg italic mb-6 text-gray-300">
                   "{testimonial.text}"
                 </blockquote>
@@ -262,7 +230,6 @@ export default function Home() {
       {/* Leadership Vision */}
       <section className="relative z-10 px-6 py-32 bg-gradient-to-r from-purple-900/20 to-blue-900/20">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="text-8xl mb-8">👨💼</div>
           <h2 className="text-4xl md:text-6xl font-bold mb-8">
             <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
               Visionary Leadership
@@ -286,7 +253,6 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-cyan-600/20"></div>
             
             <div className="relative z-10">
-              <div className="text-6xl mb-6">🚀</div>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 Be Part of
                 <span className="block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">

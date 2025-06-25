@@ -78,7 +78,7 @@ function Navbar() {
             </Link>
             <Link 
               to="/login" 
-              className="block text-white hover:text-cyan-400 py-3 transition-colors duration-300 font-medium"
+              className="block bg-cyan-500 hover:bg-cyan-600 text-white py-3 px-4 rounded-lg mt-2 mb-2 transition-colors duration-300 font-medium text-center"
               onClick={() => setOpen(false)}
             >
               Login
