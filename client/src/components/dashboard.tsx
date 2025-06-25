@@ -1,47 +1,66 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Dashboard() {
   const [isVisible, setIsVisible] = useState(false);
   const [animatedBalance, setAnimatedBalance] = useState(0);
   const [glowEffect, setGlowEffect] = useState(false);
 
+  const { user, account, refreshUserData } = useAuth();
 
-  // User data
-  const userData = {
-    firstName: "Alexander",
-    lastName: "Rodriguez",
-    balance: 127589.45,
-    id: "NB2024789456",
-    accountType: "Premium Elite"
+  const handleRefresh = async () => {
+    try {
+      await refreshUserData();
+    } catch (error) {
+      console.error('Failed to refresh data:', error);
+    }
   };
 
   useEffect(() => {
     setIsVisible(true);
     
-    // Animate balance counter
-    const duration = 2000;
-    const increment = userData.balance / (duration / 50);
-    let current = 0;
-    
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= userData.balance) {
-        current = userData.balance;
-        clearInterval(timer);
-      }
-      setAnimatedBalance(current);
-    }, 50);
+    // Animate balance counter when account data is available
+    if (account) {
+      const balance = parseFloat(account.balance);
+      const duration = 2000;
+      const increment = balance / (duration / 50);
+      let current = 0;
+      
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= balance) {
+          current = balance;
+          clearInterval(timer);
+        }
+        setAnimatedBalance(current);
+      }, 50);
 
+      return () => clearInterval(timer);
+    }
+  }, [account]);
+
+  useEffect(() => {
     // Glow effect interval
     const glowTimer = setInterval(() => {
       setGlowEffect(prev => !prev);
     }, 3000);
 
     return () => {
-      clearInterval(timer);
       clearInterval(glowTimer);
     };
   }, []);
+
+  // Show loading state if user or account data is not available
+  if (!user || !account) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-sky-400/30 border-t-sky-400 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-sky-400 text-lg">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
@@ -67,9 +86,15 @@ export default function Dashboard() {
               </h1>
               <div className="flex items-center gap-4 text-sky-300">
                 <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-lg">Welcome back, {userData.firstName}</span>
+                <span className="text-lg">Welcome back, {user.first_name}</span>
               </div>
             </div>
+            <button
+              onClick={handleRefresh}
+              className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg transition-colors duration-300 font-medium"
+            >
+              Refresh Data
+            </button>
           </div>
         </div>
 
@@ -87,7 +112,7 @@ export default function Dashboard() {
                 <div className="text-center mb-8">
                   <div className="relative inline-block">
                     <div className="w-32 h-32 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full flex items-center justify-center text-4xl font-bold text-white mb-4 mx-auto shadow-2xl shadow-sky-400/30">
-                      {userData.firstName[0]}{userData.lastName[0]}
+                      {user.first_name[0]}{user.last_name[0]}
                     </div>
                     <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-400 rounded-full border-4 border-black flex items-center justify-center">
                       <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
@@ -100,10 +125,10 @@ export default function Dashboard() {
                   <div className="text-center">
                     <div className="text-sm text-sky-300 mb-2 uppercase tracking-wide">User Information</div>
                     <div className="text-3xl font-bold text-white mb-2">
-                      {userData.firstName} {userData.lastName}
+                      {user.first_name} {user.last_name}
                     </div>
                     <div className="text-sky-300 font-medium">
-                      {userData.accountType}
+                      {account.account_type}
                     </div>
                   </div>
 
@@ -111,7 +136,7 @@ export default function Dashboard() {
                   <div className="bg-black/40 rounded-2xl p-4 border border-sky-400/30">
                     <div className="text-sm text-sky-300 mb-1 uppercase tracking-wide">Account ID</div>
                     <div className="font-mono text-xl text-white tracking-wider">
-                      {userData.id}
+                      {account.account_number}
                     </div>
                   </div>
 
@@ -190,18 +215,23 @@ export default function Dashboard() {
         <div className={`grid grid-cols-1 md:grid-cols-4 gap-6 mt-12 max-w-7xl mx-auto transform transition-all duration-1500 delay-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
           
           <div className="backdrop-blur-xl bg-gray-900/30 border border-sky-400/20 rounded-2xl p-6 hover:border-sky-400/40 transition-all duration-300 group">
-            <div className="text-sky-300 text-sm mb-1 uppercase tracking-wide">Bank Branch</div>
-            <div className="text-white font-semibold">Downtown Elite</div>
+            <div className="text-sky-300 text-sm mb-1 uppercase tracking-wide">Email</div>
+            <div className="text-white font-semibold truncate">{user.email}</div>
           </div>
 
           <div className="backdrop-blur-xl bg-gray-900/30 border border-sky-400/20 rounded-2xl p-6 hover:border-sky-400/40 transition-all duration-300 group">
-            <div className="text-sky-300 text-sm mb-1 uppercase tracking-wide">Last Login</div>
-            <div className="text-white font-semibold">2 mins ago</div>
+            <div className="text-sky-300 text-sm mb-1 uppercase tracking-wide">Account Type</div>
+            <div className="text-white font-semibold">{account.account_type}</div>
           </div>
 
           <div className="backdrop-blur-xl bg-gray-900/30 border border-sky-400/20 rounded-2xl p-6 hover:border-sky-400/40 transition-all duration-300 group">
-            <div className="text-sky-300 text-sm mb-1 uppercase tracking-wide">Location</div>
-            <div className="text-white font-semibold">New York, USA</div>
+            <div className="text-sky-300 text-sm mb-1 uppercase tracking-wide">Member Since</div>
+            <div className="text-white font-semibold">
+              {new Date(account.created_at).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short' 
+              })}
+            </div>
           </div>
 
           <div className="backdrop-blur-xl bg-gray-900/30 border border-sky-400/20 rounded-2xl p-6 hover:border-sky-400/40 transition-all duration-300 group">

@@ -1,4 +1,7 @@
+// client/src/components/SignUp.tsx
 import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function SignUp() {
   const [isVisible, setIsVisible] = useState(false);
@@ -8,8 +11,11 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [glowEffect, setGlowEffect] = useState(false);
+
+  const { register, isLoading } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsVisible(true);
@@ -24,15 +30,69 @@ export default function SignUp() {
     };
   }, []);
 
-  const handleSubmit = () => {
-    setIsLoading(true);
-    
-    // Simulate sign up process
-    setTimeout(() => {
-      setIsLoading(false);
-      // Add your sign up logic here
-      console.log('Sign up attempted with:', { fullName, email, password, confirmPassword });
-    }, 2000);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    // Basic validation
+    if (!fullName || !email || !password || !confirmPassword) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long');
+      return;
+    }
+
+    // Parse full name into first and last name
+    const nameParts = fullName.trim().split(' ');
+    const firstName = nameParts[0];
+    const lastName = nameParts.slice(1).join(' ') || firstName; // Use first name as last name if only one name provided
+
+    try {
+      await register({
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        password,
+        password_confirm: confirmPassword,
+      });
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      
+      // Handle different types of errors
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        
+        // Handle field-specific errors
+        if (errorData.email) {
+          setError(`Email: ${errorData.email[0]}`);
+        } else if (errorData.password) {
+          setError(`Password: ${errorData.password[0]}`);
+        } else if (errorData.non_field_errors) {
+          setError(errorData.non_field_errors[0]);
+        } else if (errorData.detail) {
+          setError(errorData.detail);
+        } else if (errorData.error) {
+          setError(errorData.error);
+        } else if (typeof errorData === 'string') {
+          setError(errorData);
+        } else {
+          setError('Registration failed. Please try again.');
+        }
+      } else if (error.message) {
+        setError(error.message);
+      } else {
+        setError('An error occurred during registration');
+      }
+    }
   };
 
   return (
@@ -66,8 +126,15 @@ export default function SignUp() {
                 <p className="text-gray-400 text-sm">Create your account to get started</p>
               </div>
 
+              {/* Error Message */}
+              {error && (
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+                  {error}
+                </div>
+              )}
+
               {/* Sign Up Form */}
-              <div className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Full Name Field */}
                 <div className="space-y-1">
                   <label className="text-xs text-sky-300 uppercase tracking-wide font-medium">
@@ -81,8 +148,8 @@ export default function SignUp() {
                       className="w-full bg-black/40 border border-sky-400/30 rounded-xl px-3 py-3 text-white placeholder-gray-500 focus:border-sky-400/60 focus:outline-none transition-all duration-300 backdrop-blur-lg text-sm"
                       placeholder="Enter your full name"
                       required
+                      disabled={isLoading}
                     />
-
                   </div>
                 </div>
 
@@ -99,8 +166,8 @@ export default function SignUp() {
                       className="w-full bg-black/40 border border-sky-400/30 rounded-xl px-3 py-3 text-white placeholder-gray-500 focus:border-sky-400/60 focus:outline-none transition-all duration-300 backdrop-blur-lg text-sm"
                       placeholder="Enter your email"
                       required
+                      disabled={isLoading}
                     />
-
                   </div>
                 </div>
 
@@ -117,11 +184,13 @@ export default function SignUp() {
                       className="w-full bg-black/40 border border-sky-400/30 rounded-xl px-3 py-3 text-white placeholder-gray-500 focus:border-sky-400/60 focus:outline-none transition-all duration-300 backdrop-blur-lg text-sm"
                       placeholder="Create a password"
                       required
+                      disabled={isLoading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:scale-110 transition-transform duration-300 text-gray-400 hover:text-sky-400 text-sm"
+                      disabled={isLoading}
                     >
                       {showPassword ? '👁️' : '👁️‍🗨️'}
                     </button>
@@ -141,11 +210,13 @@ export default function SignUp() {
                       className="w-full bg-black/40 border border-sky-400/30 rounded-xl px-3 py-3 text-white placeholder-gray-500 focus:border-sky-400/60 focus:outline-none transition-all duration-300 backdrop-blur-lg text-sm"
                       placeholder="Confirm your password"
                       required
+                      disabled={isLoading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:scale-110 transition-transform duration-300 text-gray-400 hover:text-sky-400 text-sm"
+                      disabled={isLoading}
                     >
                       {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
                     </button>
@@ -154,7 +225,7 @@ export default function SignUp() {
 
                 {/* Sign Up Button */}
                 <button
-                  onClick={handleSubmit}
+                  type="submit"
                   disabled={isLoading}
                   className="group w-full bg-gradient-to-r from-sky-500 to-blue-600 rounded-xl py-3 font-semibold hover:shadow-xl hover:shadow-sky-500/25 transition-all duration-300 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
                 >
@@ -169,7 +240,7 @@ export default function SignUp() {
                     )}
                   </span>
                 </button>
-              </div>
+              </form>
 
               {/* Divider */}
               <div className="my-6 flex items-center">
@@ -180,10 +251,18 @@ export default function SignUp() {
 
               {/* Social Sign Up Options */}
               <div className="space-y-2">
-                <button className="w-full bg-black/40 border border-sky-400/20 rounded-xl py-2.5 px-3 text-gray-300 hover:border-sky-400/40 hover:bg-black/60 transition-all duration-300 flex items-center justify-center text-sm">
+                <button 
+                  type="button"
+                  className="w-full bg-black/40 border border-sky-400/20 rounded-xl py-2.5 px-3 text-gray-300 hover:border-sky-400/40 hover:bg-black/60 transition-all duration-300 flex items-center justify-center text-sm"
+                  disabled={isLoading}
+                >
                   Continue with Google
                 </button>
-                <button className="w-full bg-black/40 border border-sky-400/20 rounded-xl py-2.5 px-3 text-gray-300 hover:border-sky-400/40 hover:bg-black/60 transition-all duration-300 flex items-center justify-center text-sm">
+                <button 
+                  type="button"
+                  className="w-full bg-black/40 border border-sky-400/20 rounded-xl py-2.5 px-3 text-gray-300 hover:border-sky-400/40 hover:bg-black/60 transition-all duration-300 flex items-center justify-center text-sm"
+                  disabled={isLoading}
+                >
                   Continue with Facebook
                 </button>
               </div>
@@ -192,9 +271,12 @@ export default function SignUp() {
               <div className="mt-6 text-center">
                 <p className="text-gray-400 text-sm">
                   Already have an account?{' '}
-                  <button className="text-sky-400 hover:text-sky-300 font-semibold transition-colors duration-300">
+                  <Link 
+                    to="/login" 
+                    className="text-sky-400 hover:text-sky-300 font-semibold transition-colors duration-300"
+                  >
                     Sign in here
-                  </button>
+                  </Link>
                 </p>
               </div>
             </div>

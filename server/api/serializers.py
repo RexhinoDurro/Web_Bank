@@ -19,12 +19,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         validated_data.pop('password_confirm')
+        
+        # Use our custom create_user method
         user = User.objects.create_user(
             email=validated_data['email'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
             password=validated_data['password']
         )
+        
         # Create associated account
         Account.objects.create(user=user)
         return user

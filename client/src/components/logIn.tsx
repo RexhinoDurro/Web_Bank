@@ -1,12 +1,18 @@
+// client/src/components/logIn.tsx
 import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [glowEffect, setGlowEffect] = useState(false);
+
+  const { login, isLoading } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsVisible(true);
@@ -21,15 +27,41 @@ export default function Login() {
     };
   }, []);
 
-  const handleSubmit = () => {
-    setIsLoading(true);
-    
-    // Simulate login process
-    setTimeout(() => {
-      setIsLoading(false);
-      // Add your login logic here
-      console.log('Login attempted with:', { email, password });
-    }, 2000);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (!email || !password) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    try {
+      await login(email, password);
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Login error:', error);
+      
+      // Handle different types of errors
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        if (typeof errorData === 'string') {
+          setError(errorData);
+        } else if (errorData.non_field_errors) {
+          setError(errorData.non_field_errors[0]);
+        } else if (errorData.detail) {
+          setError(errorData.detail);
+        } else if (errorData.error) {
+          setError(errorData.error);
+        } else {
+          setError('Invalid email or password');
+        }
+      } else if (error.message) {
+        setError(error.message);
+      } else {
+        setError('An error occurred during login');
+      }
+    }
   };
 
   return (
@@ -63,8 +95,15 @@ export default function Login() {
                 <p className="text-gray-400 text-sm">Sign in to your NeoBank account</p>
               </div>
 
+              {/* Error Message */}
+              {error && (
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+                  {error}
+                </div>
+              )}
+
               {/* Login Form */}
-              <div className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Email Field */}
                 <div className="space-y-1">
                   <label className="text-xs text-sky-300 uppercase tracking-wide font-medium">
@@ -78,6 +117,7 @@ export default function Login() {
                       className="w-full bg-black/40 border border-sky-400/30 rounded-xl px-3 py-3 text-white placeholder-gray-500 focus:border-sky-400/60 focus:outline-none transition-all duration-300 backdrop-blur-lg text-sm"
                       placeholder="Enter your email"
                       required
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -95,11 +135,13 @@ export default function Login() {
                       className="w-full bg-black/40 border border-sky-400/30 rounded-xl px-3 py-3 text-white placeholder-gray-500 focus:border-sky-400/60 focus:outline-none transition-all duration-300 backdrop-blur-lg text-sm"
                       placeholder="Enter your password"
                       required
+                      disabled={isLoading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:scale-110 transition-transform duration-300 text-gray-400 hover:text-sky-400 text-sm"
+                      disabled={isLoading}
                     >
                       {showPassword ? '👁️' : '👁️‍🗨️'}
                     </button>
@@ -108,7 +150,7 @@ export default function Login() {
 
                 {/* Login Button */}
                 <button
-                  onClick={handleSubmit}
+                  type="submit"
                   disabled={isLoading}
                   className="group w-full bg-gradient-to-r from-sky-500 to-blue-600 rounded-xl py-3 font-semibold hover:shadow-xl hover:shadow-sky-500/25 transition-all duration-300 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
                 >
@@ -123,7 +165,7 @@ export default function Login() {
                     )}
                   </span>
                 </button>
-              </div>
+              </form>
 
               {/* Divider */}
               <div className="my-6 flex items-center">
@@ -134,10 +176,18 @@ export default function Login() {
 
               {/* Social Login Options */}
               <div className="space-y-2">
-                <button className="w-full bg-black/40 border border-sky-400/20 rounded-xl py-2.5 px-3 text-gray-300 hover:border-sky-400/40 hover:bg-black/60 transition-all duration-300 flex items-center justify-center text-sm">
+                <button 
+                  type="button"
+                  className="w-full bg-black/40 border border-sky-400/20 rounded-xl py-2.5 px-3 text-gray-300 hover:border-sky-400/40 hover:bg-black/60 transition-all duration-300 flex items-center justify-center text-sm"
+                  disabled={isLoading}
+                >
                   Continue with Google
                 </button>
-                <button className="w-full bg-black/40 border border-sky-400/20 rounded-xl py-2.5 px-3 text-gray-300 hover:border-sky-400/40 hover:bg-black/60 transition-all duration-300 flex items-center justify-center text-sm">
+                <button 
+                  type="button"
+                  className="w-full bg-black/40 border border-sky-400/20 rounded-xl py-2.5 px-3 text-gray-300 hover:border-sky-400/40 hover:bg-black/60 transition-all duration-300 flex items-center justify-center text-sm"
+                  disabled={isLoading}
+                >
                   Continue with Facebook
                 </button>
               </div>
@@ -146,9 +196,12 @@ export default function Login() {
               <div className="mt-6 text-center">
                 <p className="text-gray-400 text-sm">
                   Don't have an account?{' '}
-                  <button className="text-sky-400 hover:text-sky-300 font-semibold transition-colors duration-300">
+                  <Link 
+                    to="/signup" 
+                    className="text-sky-400 hover:text-sky-300 font-semibold transition-colors duration-300"
+                  >
                     Sign up here
-                  </button>
+                  </Link>
                 </p>
               </div>
             </div>
